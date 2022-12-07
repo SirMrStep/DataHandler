@@ -15,9 +15,9 @@ import java.util.List;
 @SuppressWarnings("all")
 public class DataBuilder {
 
-    private ItemStack item;
-    private Block block;
-    private Entity entity;
+    private ItemStack item = null;
+    private Block block = null;
+    private Entity entity = null;
     private final BuilderType type;
 
     private enum BuilderType {
@@ -39,6 +39,18 @@ public class DataBuilder {
     public DataBuilder(Entity entity) {
         this.entity = entity;
         this.type = BuilderType.ENTITY;
+    }
+
+    public ItemStack item() {
+        return this.item;
+    }
+
+    public Entity entity() {
+        return this.entity;
+    }
+
+    public Block block() {
+        return this.block;
     }
 
     /**
