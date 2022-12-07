@@ -29,6 +29,10 @@ public class DataHandler {
         instance = plugin;
     }
 
+    public static Plugin getPluginInstance() {
+        return instance;
+    }
+
     /**
      * @param itemStack The ItemStack to edit
      * @param name The name to put on the ItemStack
@@ -157,6 +161,36 @@ public class DataHandler {
      */
     public static Block removeData(Block b, String key) {
         new CustomBlockData(b, instance).remove(new NamespacedKey(instance, key));
+        return b;
+    }
+
+    /**
+     * @param itemStack The ItemStack to modify
+     * @param key The key for the Object stored in the specified ItemStack's PersistentDataContainer
+     * @param type The type of Object you are storing (you can use DataType for this)
+     */
+    public static ItemStack setData(ItemStack itemStack, String key, PersistentDataType type, Object object) {
+        itemStack.getItemMeta().getPersistentDataContainer().set(new NamespacedKey(instance, key), type, object);
+        return itemStack;
+    }
+
+    /**
+     * @param ent The Entity to modify
+     * @param key The key for the Object stored in the specified Entity's PersistentDataContainer
+     * @param type The type of Object you are storing (you can use DataType for this)
+     */
+    public static Entity setData(Entity ent, String key, PersistentDataType type, Object object) {
+        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), type, object);
+        return ent;
+    }
+
+    /**
+     * @param b The Block to modify
+     * @param key The key for the Object stored in the specified Block's PersistentDataContainer
+     * @param type The type of Object you are storing (you can use DataType for this)
+     */
+    public static Block setData(Block b, String key, PersistentDataType type, Object object) {
+        new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), type, object);
         return b;
     }
 
