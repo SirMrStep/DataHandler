@@ -9,10 +9,12 @@ import org.bukkit.persistence.PersistentDataType;
 
 @SuppressWarnings("all")
 public class EntityDataBuilder {
-    
-    public PersistentDataContainer container;
+
+    private Entity entity;
+    private PersistentDataContainer container;
     
     public EntityDataBuilder(Entity entity) {
+        this.entity = entity;
         this.container = entity.getPersistentDataContainer();
     }
 
@@ -114,6 +116,8 @@ public class EntityDataBuilder {
         return this;
     }
     
-    
+    public Entity entity() {
+        return this.entity;
+    }
 
 }

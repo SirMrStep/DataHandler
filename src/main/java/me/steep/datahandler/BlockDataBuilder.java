@@ -116,4 +116,8 @@ public class BlockDataBuilder {
         return this;
     }
 
+    public Block block() {
+        return this.block;
+    }
+
 }

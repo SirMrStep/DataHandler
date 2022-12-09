@@ -168,4 +168,8 @@ public class ItemDataBuilder {
         return this;
     }
 
+    public ItemStack item() {
+        return this.itemStack;
+    }
+
 }
