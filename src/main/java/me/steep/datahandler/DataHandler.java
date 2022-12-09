@@ -249,7 +249,7 @@ public class DataHandler {
     }
 
     /**
-     * @param ent The Block to edit.
+     * @param block The Block to edit.
      * @param key The key to the Boolean stored in the Block's PersistentDataContainer.
      * @param b The Boolean to store in the specified Block's PersistentDataContainer.
      */
@@ -481,8 +481,6 @@ public class DataHandler {
         new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), DataType.ITEM_STACK, toStore);
         return b;
     }
-
-    // TODO: do the same as the below 3 methods but for setData
 
     /**
      * @param itemStack The ItemStack to check
