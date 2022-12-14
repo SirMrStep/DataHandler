@@ -52,6 +52,15 @@ public class ItemDataBuilder {
     }
 
     /**
+     * @param lore The lore to put on the ItemStack
+     */
+    public ItemDataBuilder setLore(List<String> lore) {
+        meta.setLore(lore);
+        itemStack.setItemMeta(meta);
+        return this;
+    }
+
+    /**
      * @param name The name to put on the ItemStack.
      */
     public ItemDataBuilder setName(String name) {

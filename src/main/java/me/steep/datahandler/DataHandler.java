@@ -71,6 +71,17 @@ public class DataHandler {
     }
 
     /**
+     * @param itemStack The ItemStack to edit
+     * @param lore The lore to put on the ItemStack
+     */
+    public static ItemStack setLore(ItemStack itemStack, List<String> lore) {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setLore(lore);
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+
+    /**
      * @param itemStack The ItemStack to edit.
      * @param name The name to put on the ItemStack.
      */
