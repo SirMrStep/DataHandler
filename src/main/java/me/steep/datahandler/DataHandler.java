@@ -2,18 +2,19 @@ package me.steep.datahandler;
 
 import com.jeff_media.customblockdata.CustomBlockData;
 import com.jeff_media.morepersistentdatatypes.DataType;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static me.steep.datahandler.Key.key;
 
 /**
  * This DataHandler will work for all versions that have PersistantDataContainer
@@ -27,6 +28,7 @@ public class DataHandler {
 
     public static void register(Plugin plugin) {
         instance = plugin;
+        Key.register(plugin);
     }
 
     public static Plugin getPluginInstance() {
@@ -99,16 +101,16 @@ public class DataHandler {
      * @return Whether the specified ItemStack has the specified key in it's PersistentDataContainer.
      */
     public static boolean hasData(ItemStack itemStack, String key, PersistentDataType dataType) {
-        return itemStack.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(instance, key), dataType);
+        return itemStack.getItemMeta().getPersistentDataContainer().has(key(key), dataType);
     }
 
     /**
-     * @param ent The Entity to check.
+     * @param ent The Object extending PersistantDataHolder to modify.
      * @param key The key to check for.
-     * @return Whether the specified Entity has the specified key in it's PersistentDataContainer.
+     * @return Whether the specified Object extending PersistantDataHolder has the specified key in it's PersistentDataContainer.
      */
-    public static boolean hasData(Entity ent, String key, PersistentDataType dataType) {
-        return ent.getPersistentDataContainer().has(new NamespacedKey(instance, key), dataType);
+    public static boolean hasData(PersistentDataHolder holder, String key, PersistentDataType dataType) {
+        return holder.getPersistentDataContainer().has(key(key), dataType);
     }
 
     /**
@@ -119,7 +121,7 @@ public class DataHandler {
      * @return Whether the specified Block has the specified key in it's PersistentDataContainer.
      */
     public static boolean hasData(Block b, String key, PersistentDataType dataType) {
-        return new CustomBlockData(b, instance).has(new NamespacedKey(instance, key), dataType);
+        return new CustomBlockData(b, instance).has(key(key), dataType);
     }
 
     /**
@@ -131,11 +133,10 @@ public class DataHandler {
     }
 
     /**
-     * @param ent The Entity to get the PersistentDataContainer from.
-     * @return Returns the PersistentDataContainer of the specified Entity.
+     * @param holder The Object extending PersistantDataHolder to modify
      */
-    public static PersistentDataContainer getData(Entity ent) {
-        return ent.getPersistentDataContainer();
+    public static PersistentDataContainer getData(PersistentDataHolder holder) {
+        return holder.getPersistentDataContainer();
     }
 
     /**
@@ -152,18 +153,18 @@ public class DataHandler {
      */
     public static ItemStack removeData(ItemStack itemStack, String key) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().remove(new NamespacedKey(instance, key));
+        meta.getPersistentDataContainer().remove(key(key));
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit
-     * @param key The key to remove from the specified Entity's PersistentDataContainer
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key for the Object stored in the specified Entity's PersistentDataContainer
      */
-    public static Entity removeData(Entity ent, String key) {
-        ent.getPersistentDataContainer().remove(new NamespacedKey(instance, key));
-        return ent;
+    public static <T extends PersistentDataHolder> T removeData(T holder, String key) {
+        holder.getPersistentDataContainer().remove(key(key));
+        return holder;
     }
 
     /**
@@ -171,7 +172,7 @@ public class DataHandler {
      * @param key The key to remove from the specified Block's PersistentDataContainer
      */
     public static Block removeData(Block b, String key) {
-        new CustomBlockData(b, instance).remove(new NamespacedKey(instance, key));
+        new CustomBlockData(b, instance).remove(key(key));
         return b;
     }
 
@@ -181,18 +182,19 @@ public class DataHandler {
      * @param type The type of Object you are storing (you can use DataType for this)
      */
     public static ItemStack setData(ItemStack itemStack, String key, PersistentDataType type, Object object) {
-        itemStack.getItemMeta().getPersistentDataContainer().set(new NamespacedKey(instance, key), type, object);
+        itemStack.getItemMeta().getPersistentDataContainer().set(key(key), type, object);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to modify
+     * @param T The Object extending PersistantDataHolder to modify
      * @param key The key for the Object stored in the specified Entity's PersistentDataContainer
      * @param type The type of Object you are storing (you can use DataType for this)
+     * @param object The object you are storing.
      */
-    public static Entity setData(Entity ent, String key, PersistentDataType type, Object object) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), type, object);
-        return ent;
+    public static <T extends PersistentDataHolder> T setData(T holder, String key, PersistentDataType type, Object object) {
+        holder.getPersistentDataContainer().set(key(key), type, object);
+        return holder;
     }
 
     /**
@@ -201,7 +203,7 @@ public class DataHandler {
      * @param type The type of Object you are storing (you can use DataType for this)
      */
     public static Block setData(Block b, String key, PersistentDataType type, Object object) {
-        new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), type, object);
+        new CustomBlockData(b, instance).set(key(key), type, object);
         return b;
     }
 
@@ -212,19 +214,19 @@ public class DataHandler {
      */
     public static ItemStack setDataString(ItemStack itemStack, String key, String s) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.STRING, s);
+        meta.getPersistentDataContainer().set(key(key), DataType.STRING, s);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit
-     * @param key The key to the String stored in the Entity's PersistentDataContainer
-     * @param s The String to store in the specified Entity's PersistentDataContainer
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key to the String stored in the Object's PersistentDataContainer
+     * @param s The String to store in the specified Object's PersistentDataContainer
      */
-    public static Entity setDataString(Entity ent, String key, String s) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.STRING, s);
-        return ent;
+    public static <T extends PersistentDataHolder> T setDataString(T holder, String key, String s) {
+        holder.getPersistentDataContainer().set(key(key), DataType.STRING, s);
+        return holder;
     }
 
     /**
@@ -233,7 +235,7 @@ public class DataHandler {
      * @param s The String to store in the specified Block's PersistentDataContainer
      */
     public static Block setDataString(Block b, String key, String s) {
-        new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), DataType.STRING, s);
+        new CustomBlockData(b, instance).set(key(key), DataType.STRING, s);
         return b;
     }
 
@@ -244,19 +246,19 @@ public class DataHandler {
      */
     public static ItemStack setDataBoolean(ItemStack itemStack, String key, Boolean b) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.BOOLEAN, b);
+        meta.getPersistentDataContainer().set(key(key), DataType.BOOLEAN, b);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit.
-     * @param key The key to the Boolean stored in the Entity's PersistentDataContainer.
-     * @param b The Boolean to store in the specified Entity's PersistentDataContainer.
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key to the Boolean stored in the Object's PersistentDataContainer.
+     * @param b The Boolean to store in the specified Object's PersistentDataContainer.
      */
-    public static Entity setDataBoolean(Entity ent, String key, Boolean b) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.BOOLEAN, b);
-        return ent;
+    public static <T extends PersistentDataHolder> T setDataBoolean(T holder, String key, Boolean b) {
+        holder.getPersistentDataContainer().set(key(key), DataType.BOOLEAN, b);
+        return holder;
     }
 
     /**
@@ -265,7 +267,7 @@ public class DataHandler {
      * @param b The Boolean to store in the specified Block's PersistentDataContainer.
      */
     public static Block setDataBoolean(Block block, String key, Boolean b) {
-        new CustomBlockData(block, instance).set(new NamespacedKey(instance, key), DataType.BOOLEAN, b);
+        new CustomBlockData(block, instance).set(key(key), DataType.BOOLEAN, b);
         return block;
     }
 
@@ -276,19 +278,19 @@ public class DataHandler {
      */
     public static ItemStack setDataInt(ItemStack itemStack, String key, Integer i) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.INTEGER, i);
+        meta.getPersistentDataContainer().set(key(key), DataType.INTEGER, i);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit.
-     * @param key The key to the Integer stored in the Entity's PersistentDataContainer.
-     * @param i The Integer to store in the specified Entity's PersistentDataContainer.
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key to the Integer stored in the Object's PersistentDataContainer.
+     * @param i The Integer to store in the specified Object's PersistentDataContainer.
      */
-    public static Entity setDataInt(Entity ent, String key, Integer i) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.INTEGER, i);
-        return ent;
+    public static <T extends PersistentDataHolder> T setDataInt(T holder, String key, Integer i) {
+        holder.getPersistentDataContainer().set(key(key), DataType.INTEGER, i);
+        return holder;
     }
 
     /**
@@ -297,7 +299,7 @@ public class DataHandler {
      * @param i The Integer to store in the specified Block's PersistentDataContainer.
      */
     public static Block setDataInt(Block b, String key, Integer i) {
-        new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), DataType.INTEGER, i);
+        new CustomBlockData(b, instance).set(key(key), DataType.INTEGER, i);
         return b;
     }
 
@@ -308,19 +310,19 @@ public class DataHandler {
      */
     public static ItemStack setDataDouble(ItemStack itemStack, String key, Double d) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.DOUBLE, d);
+        meta.getPersistentDataContainer().set(key(key), DataType.DOUBLE, d);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit.
-     * @param key The key to the Double stored in the Entity's PersistentDataContainer.
-     * @param d The Double to store in the specified Entity's PersistentDataContainer.
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key to the Double stored in the Object's PersistentDataContainer.
+     * @param d The Double to store in the specified Object's PersistentDataContainer.
      */
-    public static Entity setDataDouble(Entity ent, String key, Double d) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.DOUBLE, d);
-        return ent;
+    public static <T extends PersistentDataHolder> T setDataDouble(T holder, String key, Double d) {
+        holder.getPersistentDataContainer().set(key(key), DataType.DOUBLE, d);
+        return holder;
     }
 
     /**
@@ -329,7 +331,7 @@ public class DataHandler {
      * @param d The Double to store in the specified Block's PersistentDataContainer.
      */
     public static Block setDataDouble(Block b, String key, Double d) {
-        new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), DataType.DOUBLE, d);
+        new CustomBlockData(b, instance).set(key(key), DataType.DOUBLE, d);
         return b;
     }
 
@@ -340,19 +342,19 @@ public class DataHandler {
      */
     public static ItemStack setDataFloat(ItemStack itemStack, String key, Float f) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.FLOAT, f);
+        meta.getPersistentDataContainer().set(key(key), DataType.FLOAT, f);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit.
-     * @param key The key to the Float stored in the Entity's PersistentDataContainer.
-     * @param f The Float to store in the specified Entity's PersistentDataContainer.
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key to the Float stored in the Object's PersistentDataContainer.
+     * @param f The Float to store in the specified Object's PersistentDataContainer.
      */
-    public static Entity setDataFloat(Entity ent, String key, Float f) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.FLOAT, f);
-        return ent;
+    public static <T extends PersistentDataHolder> T setDataFloat(T holder, String key, Float f) {
+        holder.getPersistentDataContainer().set(key(key), DataType.FLOAT, f);
+        return holder;
     }
 
     /**
@@ -361,7 +363,7 @@ public class DataHandler {
      * @param f The Float to store in the specified Block's PersistentDataContainer.
      */
     public static Block setDataFloat(Block b, String key, Float f) {
-        new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), DataType.FLOAT, f);
+        new CustomBlockData(b, instance).set(key(key), DataType.FLOAT, f);
         return b;
     }
 
@@ -372,19 +374,19 @@ public class DataHandler {
      */
     public static ItemStack setDataLong(ItemStack itemStack, String key, Long l) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.LONG, l);
+        meta.getPersistentDataContainer().set(key(key), DataType.LONG, l);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit.
-     * @param key The key to the Long stored in the Entity's PersistentDataContainer.
-     * @param l The Long to store in the specified Entity's PersistentDataContainer.
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key to the Long stored in the Object's PersistentDataContainer.
+     * @param l The Long to store in the specified Object's PersistentDataContainer.
      */
-    public static Entity setDataLong(Entity ent, String key, Long l) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.LONG, l);
-        return ent;
+    public static <T extends PersistentDataHolder> T setDataLong(T holder, String key, Long l) {
+        holder.getPersistentDataContainer().set(key(key), DataType.LONG, l);
+        return holder;
     }
 
     /**
@@ -393,7 +395,7 @@ public class DataHandler {
      * @param l The Long to store in the specified Block's PersistentDataContainer.
      */
     public static Block setDataLong(Block b, String key, Long l) {
-        new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), DataType.LONG, l);
+        new CustomBlockData(b, instance).set(key(key), DataType.LONG, l);
         return b;
     }
 
@@ -404,19 +406,19 @@ public class DataHandler {
      */
     public static ItemStack setDataShort(ItemStack itemStack, String key, Short s) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.SHORT, s);
+        meta.getPersistentDataContainer().set(key(key), DataType.SHORT, s);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit.
-     * @param key The key to the Short stored in the Entity's PersistentDataContainer.
-     * @param s The Short to store in the specified Entity's PersistentDataContainer.
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key to the Short stored in the Object's PersistentDataContainer.
+     * @param s The Short to store in the specified Object's PersistentDataContainer.
      */
-    public static Entity setDataShort(Entity ent, String key, Short s) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.SHORT, s);
-        return ent;
+    public static <T extends PersistentDataHolder> T setDataShort(T holder, String key, Short s) {
+        holder.getPersistentDataContainer().set(key(key), DataType.SHORT, s);
+        return holder;
     }
 
     /**
@@ -425,7 +427,7 @@ public class DataHandler {
      * @param s The Short to store in the specified Block's PersistentDataContainer.
      */
     public static Block setDataShort(Block b, String key, Short s) {
-        new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), DataType.SHORT, s);
+        new CustomBlockData(b, instance).set(key(key), DataType.SHORT, s);
         return b;
     }
 
@@ -436,19 +438,19 @@ public class DataHandler {
      */
     public static ItemStack setDataByte(ItemStack itemStack, String key, Byte b) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.BYTE, b);
+        meta.getPersistentDataContainer().set(key(key), DataType.BYTE, b);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit.
-     * @param key The key to the Byte stored in the Entity's PersistentDataContainer.
-     * @param b The Byte to store in the specified Entity's PersistentDataContainer.
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key to the Byte stored in the Object's PersistentDataContainer
+     * @param b The Byte to store in the specified Object's PersistentDataContainer
      */
-    public static Entity setDataByte(Entity ent, String key, Byte b) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.BYTE, b);
-        return ent;
+    public static <T extends PersistentDataHolder> T setDataByte(T holder, String key, Byte b) {
+        holder.getPersistentDataContainer().set(key(key), DataType.BYTE, b);
+        return holder;
     }
 
     /**
@@ -457,7 +459,7 @@ public class DataHandler {
      * @param b The Byte to store in the specified Block's PersistentDataContainer.
      */
     public static Block setDataByte(Block block, String key, Byte b) {
-        new CustomBlockData(block, instance).set(new NamespacedKey(instance, key), DataType.BYTE, b);
+        new CustomBlockData(block, instance).set(key(key), DataType.BYTE, b);
         return block;
     }
 
@@ -468,19 +470,19 @@ public class DataHandler {
      */
     public static ItemStack setDataItemStack(ItemStack itemStack, String key, ItemStack toStore) {
         ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.ITEM_STACK, toStore);
+        meta.getPersistentDataContainer().set(key(key), DataType.ITEM_STACK, toStore);
         itemStack.setItemMeta(meta);
         return itemStack;
     }
 
     /**
-     * @param ent The Entity to edit
-     * @param key The key to the ItemStack stored in the specified Entity's PersistentDataContainer
-     * @param toStore The ItemStack to store in the specified Entity's PersistentDataContainer
+     * @param T The Object extending PersistantDataHolder to modify
+     * @param key The key to the ItemStack stored in the specified Object's PersistentDataContainer
+     * @param toStore The ItemStack to store in the specified Object's PersistentDataContainer
      */
-    public static Entity setDataItemStack(Entity ent, String key, ItemStack toStore) {
-        ent.getPersistentDataContainer().set(new NamespacedKey(instance, key), DataType.ITEM_STACK, toStore);
-        return ent;
+    public static <T extends PersistentDataHolder> T setDataItemStack(T holder, String key, ItemStack toStore) {
+        holder.getPersistentDataContainer().set(key(key), DataType.ITEM_STACK, toStore);
+        return holder;
     }
 
     /**
@@ -489,7 +491,7 @@ public class DataHandler {
      * @param toStore The ItemStack to store in the specified Block's PersistentDataContainer
      */
     public static Block setDataItemStack(Block b, String key, ItemStack toStore) {
-        new CustomBlockData(b, instance).set(new NamespacedKey(instance, key), DataType.ITEM_STACK, toStore);
+        new CustomBlockData(b, instance).set(key(key), DataType.ITEM_STACK, toStore);
         return b;
     }
 
@@ -501,18 +503,18 @@ public class DataHandler {
      */
     @Nullable
     public static Object getData(ItemStack itemStack, String key, PersistentDataType type) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), type);
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), type);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the Object stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the Object stored in the specified Object's PersistentDataContainer
      * @param type The type of Object you are getting (you can use DataType for this)
      * @return The requested Object or null of not present
      */
     @Nullable
-    public static Object getData(Entity ent, String key, PersistentDataType type) {
-        return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), type);
+    public static Object getData(PersistentDataHolder holder, String key, PersistentDataType type) {
+        return holder.getPersistentDataContainer().get(key(key), type);
     }
 
     /**
@@ -523,7 +525,7 @@ public class DataHandler {
      */
     @Nullable
     public static Object getData(Block b, String key, PersistentDataType type) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), type);
+        return new CustomBlockData(b, instance).get(key(key), type);
     }
 
     /**
@@ -533,17 +535,17 @@ public class DataHandler {
      */
     @Nullable
     public static String getDataString(ItemStack itemStack, String key) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.STRING);
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.STRING);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the String stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the String stored in the specified Object's PersistentDataContainer
      * @return The requested String or null if not present
      */
     @Nullable
-    public static String getDataString(Entity ent, String key) {
-        return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.STRING);
+    public static String getDataString(PersistentDataHolder holder, String key) {
+        return holder.getPersistentDataContainer().get(key(key), DataType.STRING);
     }
 
     /**
@@ -553,7 +555,7 @@ public class DataHandler {
      */
     @Nullable
     public static String getDataString(Block b, String key) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), DataType.STRING);
+        return new CustomBlockData(b, instance).get(key(key), DataType.STRING);
     }
 
     /**
@@ -562,18 +564,18 @@ public class DataHandler {
      * @return The requested Boolean or null if not present
      */
     @Nullable
-    public static Boolean getDataBoolean(ItemStack itemStack, String key) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.BOOLEAN);
+    public static boolean getDataBoolean(ItemStack itemStack, String key) {
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.BOOLEAN);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the Boolean stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the Boolean stored in the specified Object's PersistentDataContainer
      * @return The requested String or null if not present
      */
     @Nullable
-    public static Boolean getDataBoolean(Entity ent, String key) {
-        return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.BOOLEAN);
+    public static boolean getDataBoolean(PersistentDataHolder holder, String key) {
+        return holder.getPersistentDataContainer().get(key(key), DataType.BOOLEAN);
     }
 
     /**
@@ -582,8 +584,8 @@ public class DataHandler {
      * @return The requested String or null if not present
      */
     @Nullable
-    public static Boolean getDataBoolean(Block b, String key) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), DataType.BOOLEAN);
+    public static boolean getDataBoolean(Block b, String key) {
+        return new CustomBlockData(b, instance).get(key(key), DataType.BOOLEAN);
     }
 
 
@@ -593,18 +595,18 @@ public class DataHandler {
      * @return The requested Integer or null if not present
      */
     @Nullable
-    public static Integer getDataInt(ItemStack itemStack, String key) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.INTEGER);
+    public static int getDataInt(ItemStack itemStack, String key) {
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.INTEGER);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the Integer stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the Integer stored in the specified Object's PersistentDataContainer
      * @return The requested Integer or null if not present
      */
     @Nullable
-    public static Integer getDataInt(Entity ent, String key) {
-        return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.INTEGER);
+    public static int getDataInt(PersistentDataHolder holder, String key) {
+        return holder.getPersistentDataContainer().get(key(key), DataType.INTEGER);
     }
 
     /**
@@ -613,8 +615,8 @@ public class DataHandler {
      * @return The requested Integer or null if not present
      */
     @Nullable
-    public static Integer getDataInt(Block b, String key) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), DataType.INTEGER);
+    public static int getDataInt(Block b, String key) {
+        return new CustomBlockData(b, instance).get(key(key), DataType.INTEGER);
     }
 
     /**
@@ -623,18 +625,18 @@ public class DataHandler {
      * @return The requested Double or null if not present
      */
     @Nullable
-    public static Double getDataDouble(ItemStack itemStack, String key) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.DOUBLE);
+    public static double getDataDouble(ItemStack itemStack, String key) {
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.DOUBLE);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the Double stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the Double stored in the specified Object's PersistentDataContainer
      * @return The requested Double or null if not present
      */
     @Nullable
-    public static Double getDataDouble(Entity ent, String key) {
-        return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.DOUBLE);
+    public static double getDataDouble(PersistentDataHolder holder, String key) {
+        return holder.getPersistentDataContainer().get(key(key), DataType.DOUBLE);
     }
 
     /**
@@ -643,8 +645,8 @@ public class DataHandler {
      * @return The requested Double or null if not present
      */
     @Nullable
-    public static Double getDataDouble(Block b, String key) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), DataType.DOUBLE);
+    public static double getDataDouble(Block b, String key) {
+        return new CustomBlockData(b, instance).get(key(key), DataType.DOUBLE);
     }
 
     /**
@@ -653,18 +655,18 @@ public class DataHandler {
      * @return The requested Float or null if not present
      */
     @Nullable
-    public static Float getDataFloat(ItemStack itemStack, String key) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.FLOAT);
+    public static float getDataFloat(ItemStack itemStack, String key) {
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.FLOAT);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the Float stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the Float stored in the specified Object's PersistentDataContainer
      * @return The requested Float or null if not present
      */
     @Nullable
-    public static Float getDataFloat(Entity ent, String key) {
-        return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.FLOAT);
+    public static float getDataFloat(PersistentDataHolder holder, String key) {
+        return holder.getPersistentDataContainer().get(key(key), DataType.FLOAT);
     }
 
     /**
@@ -673,8 +675,8 @@ public class DataHandler {
      * @return The requested Float or null if not present
      */
     @Nullable
-    public static Float getDataFloat(Block b, String key) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), DataType.FLOAT);
+    public static float getDataFloat(Block b, String key) {
+        return new CustomBlockData(b, instance).get(key(key), DataType.FLOAT);
     }
 
     /**
@@ -683,18 +685,18 @@ public class DataHandler {
      * @return The requested Long or null if not present
      */
     @Nullable
-    public static Long getDataLong(ItemStack itemStack, String key) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.LONG);
+    public static long getDataLong(ItemStack itemStack, String key) {
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.LONG);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the Long stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the Long stored in the specified Object's PersistentDataContainer
      * @return The requested Long or null if not present
      */
     @Nullable
-    public static Long getDataLong(Entity ent, String key) {
-        return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.LONG);
+    public static long getDataLong(PersistentDataHolder holder, String key) {
+        return holder.getPersistentDataContainer().get(key(key), DataType.LONG);
     }
 
     /**
@@ -703,8 +705,8 @@ public class DataHandler {
      * @return The requested Long or null if not present
      */
     @Nullable
-    public static Long getDataLong(Block b, String key) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), DataType.LONG);
+    public static long getDataLong(Block b, String key) {
+        return new CustomBlockData(b, instance).get(key(key), DataType.LONG);
     }
 
     /**
@@ -713,18 +715,18 @@ public class DataHandler {
      * @return The requested Short or null if not present
      */
     @Nullable
-    public static Short getDataShort(ItemStack itemStack, String key) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.SHORT);
+    public static short getDataShort(ItemStack itemStack, String key) {
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.SHORT);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the Short stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the Short stored in the specified Object's PersistentDataContainer
      * @return The requested Short or null if not present
      */
     @Nullable
-    public static Short getDataShort(Entity ent, String key) {
-        return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.SHORT);
+    public static short getDataShort(PersistentDataHolder holder, String key) {
+        return holder.getPersistentDataContainer().get(key(key), DataType.SHORT);
     }
 
     /**
@@ -733,8 +735,8 @@ public class DataHandler {
      * @return The requested Short or null if not present
      */
     @Nullable
-    public static Short getDataShort(Block b, String key) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), DataType.SHORT);
+    public static short getDataShort(Block b, String key) {
+        return new CustomBlockData(b, instance).get(key(key), DataType.SHORT);
     }
 
     /**
@@ -743,18 +745,18 @@ public class DataHandler {
      * @return The requested Byte or null if not present
      */
     @Nullable
-    public static Byte getDataByte(ItemStack itemStack, String key) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.BYTE);
+    public static byte getDataByte(ItemStack itemStack, String key) {
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.BYTE);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the Byte stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the Byte stored in the specified Object's PersistentDataContainer
      * @return The requested Byte or null if not present
      */
     @Nullable
-    public static Byte getDataByte(Entity ent, String key) {
-       return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.BYTE);
+    public static byte getDataByte(PersistentDataHolder holder, String key) {
+        return holder.getPersistentDataContainer().get(key(key), DataType.BYTE);
     }
 
     /**
@@ -763,8 +765,8 @@ public class DataHandler {
      * @return The requested Byte or null if not present
      */
     @Nullable
-    public static Byte getDataByte(Block b, String key) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), DataType.BYTE);
+    public static byte getDataByte(Block b, String key) {
+        return new CustomBlockData(b, instance).get(key(key), DataType.BYTE);
     }
 
     // this is where the fun starts
@@ -776,17 +778,17 @@ public class DataHandler {
      */
     @Nullable
     public static ItemStack getDataItemStack(ItemStack itemStack, String key) {
-        return itemStack.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.ITEM_STACK);
+        return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.ITEM_STACK);
     }
 
     /**
-     * @param ent The Entity to check
-     * @param key The key to the ItemStack stored in the specified Entity's PersistentDataContainer
+     * @param holder The Object extending PersistantDataHolder to check
+     * @param key The key to the ItemStack stored in the specified Object's PersistentDataContainer
      * @return The requested ItemStack or null if not present
      */
     @Nullable
-    public static ItemStack getDataItemStack(Entity ent, String key) {
-        return ent.getPersistentDataContainer().get(new NamespacedKey(instance, key), DataType.ITEM_STACK);
+    public static ItemStack getDataItemStack(PersistentDataHolder holder, String key) {
+        return holder.getPersistentDataContainer().get(key(key), DataType.ITEM_STACK);
     }
 
     /**
@@ -796,8 +798,9 @@ public class DataHandler {
      */
     @Nullable
     public static ItemStack getDataItemStack(Block b, String key) {
-        return new CustomBlockData(b, instance).get(new NamespacedKey(instance, key), DataType.ITEM_STACK);
+        return new CustomBlockData(b, instance).get(key(key), DataType.ITEM_STACK);
     }
 
+    // yeeeeeeeeeeeeey we're done.
 
 }
