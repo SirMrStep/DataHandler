@@ -9,6 +9,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -26,9 +27,8 @@ public class DataHandler {
 
     private static Plugin instance;
 
-    public static void register(Plugin plugin) {
-        instance = plugin;
-        Key.register(plugin);
+    static {
+        instance = JavaPlugin.getProvidingPlugin(DataHandler.class);
     }
 
     public static Plugin getPluginInstance() {
@@ -182,7 +182,9 @@ public class DataHandler {
      * @param type The type of Object you are storing (you can use DataType for this)
      */
     public static ItemStack setData(ItemStack itemStack, String key, PersistentDataType type, Object object) {
-        itemStack.getItemMeta().getPersistentDataContainer().set(key(key), type, object);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.getPersistentDataContainer().set(key(key), type, object);
+        itemStack.setItemMeta(meta);
         return itemStack;
     }
 
