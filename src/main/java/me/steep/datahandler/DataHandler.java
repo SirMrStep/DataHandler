@@ -2,6 +2,8 @@ package me.steep.datahandler;
 
 import com.jeff_media.customblockdata.CustomBlockData;
 import com.jeff_media.morepersistentdatatypes.DataType;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -90,6 +92,20 @@ public class DataHandler {
     public static ItemStack setName(ItemStack itemStack, String name) {
         ItemMeta meta = itemStack.getItemMeta();
         meta.setDisplayName(name);
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+
+    public ItemStack addAttributeModifier(ItemStack itemStack, Attribute attribute, AttributeModifier modifier) {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.addAttributeModifier(attribute, modifier);
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+
+    public ItemStack setCustomModelData(ItemStack itemStack, float customModelData) {
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.getCustomModelDataComponent().setFloats(List.of(customModelData));
         itemStack.setItemMeta(meta);
         return itemStack;
     }

@@ -73,6 +73,11 @@ public class ItemDataBuilder {
         return this;
     }
 
+    public ItemDataBuilder setCustomModelData(float customModelData) {
+        meta.getCustomModelDataComponent().setFloats(List.of(customModelData));
+        return this;
+    }
+
     /**
      * @param key The key to remove from the specified ItemStack's PersistentDataContainer
      */
