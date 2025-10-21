@@ -565,28 +565,25 @@ public class DataHandler {
      * @param key The key to the Boolean stored in the specified ItemStack's PersistentDataContainer
      * @return The requested Boolean or null if not present
      */
-    @Nullable
-    public static boolean getDataBoolean(ItemStack itemStack, String key) {
+    public static Boolean getDataBoolean(ItemStack itemStack, String key) {
         return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.BOOLEAN);
     }
 
     /**
      * @param holder The Object extending PersistantDataHolder to check
      * @param key The key to the Boolean stored in the specified Object's PersistentDataContainer
-     * @return The requested String or null if not present
+     * @return The requested Boolean or null if not present
      */
-    @Nullable
-    public static boolean getDataBoolean(PersistentDataHolder holder, String key) {
+    public static Boolean getDataBoolean(PersistentDataHolder holder, String key) {
         return holder.getPersistentDataContainer().get(key(key), DataType.BOOLEAN);
     }
 
     /**
      * @param b The Block to check
      * @param key The key to the Boolean stored in the specified Block's PersistentDataContainer
-     * @return The requested String or null if not present
+     * @return The requested Boolean or null if not present
      */
-    @Nullable
-    public static boolean getDataBoolean(Block b, String key) {
+    public static Boolean getDataBoolean(Block b, String key) {
         return new CustomBlockData(b, instance).get(key(key), DataType.BOOLEAN);
     }
 
@@ -596,8 +593,7 @@ public class DataHandler {
      * @param key The key to the Integer stored in the ItemStack's PersistentDataContainer
      * @return The requested Integer or null if not present
      */
-    @Nullable
-    public static int getDataInt(ItemStack itemStack, String key) {
+    public static Integer getDataInt(ItemStack itemStack, String key) {
         return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.INTEGER);
     }
 
@@ -606,8 +602,7 @@ public class DataHandler {
      * @param key The key to the Integer stored in the specified Object's PersistentDataContainer
      * @return The requested Integer or null if not present
      */
-    @Nullable
-    public static int getDataInt(PersistentDataHolder holder, String key) {
+    public static Integer getDataInt(PersistentDataHolder holder, String key) {
         return holder.getPersistentDataContainer().get(key(key), DataType.INTEGER);
     }
 
@@ -616,8 +611,7 @@ public class DataHandler {
      * @param key The key to the Integer stored in the specified Block's PersistentDataContainer
      * @return The requested Integer or null if not present
      */
-    @Nullable
-    public static int getDataInt(Block b, String key) {
+    public static Integer getDataInt(Block b, String key) {
         return new CustomBlockData(b, instance).get(key(key), DataType.INTEGER);
     }
 
@@ -626,8 +620,7 @@ public class DataHandler {
      * @param key The key to the Double stored in the specified ItemStack's PersistentDataContainer
      * @return The requested Double or null if not present
      */
-    @Nullable
-    public static double getDataDouble(ItemStack itemStack, String key) {
+    public static Double getDataDouble(ItemStack itemStack, String key) {
         return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.DOUBLE);
     }
 
@@ -636,8 +629,7 @@ public class DataHandler {
      * @param key The key to the Double stored in the specified Object's PersistentDataContainer
      * @return The requested Double or null if not present
      */
-    @Nullable
-    public static double getDataDouble(PersistentDataHolder holder, String key) {
+    public static Double getDataDouble(PersistentDataHolder holder, String key) {
         return holder.getPersistentDataContainer().get(key(key), DataType.DOUBLE);
     }
 
@@ -646,8 +638,7 @@ public class DataHandler {
      * @param key The key to the Double stored in the specified Block's PersistentDataContainer
      * @return The requested Double or null if not present
      */
-    @Nullable
-    public static double getDataDouble(Block b, String key) {
+    public static Double getDataDouble(Block b, String key) {
         return new CustomBlockData(b, instance).get(key(key), DataType.DOUBLE);
     }
 
@@ -656,8 +647,7 @@ public class DataHandler {
      * @param key The key to the Float stored in the specified ItemStack's PersistentDataContainer
      * @return The requested Float or null if not present
      */
-    @Nullable
-    public static float getDataFloat(ItemStack itemStack, String key) {
+    public static Float getDataFloat(ItemStack itemStack, String key) {
         return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.FLOAT);
     }
 
@@ -666,8 +656,7 @@ public class DataHandler {
      * @param key The key to the Float stored in the specified Object's PersistentDataContainer
      * @return The requested Float or null if not present
      */
-    @Nullable
-    public static float getDataFloat(PersistentDataHolder holder, String key) {
+    public static Float getDataFloat(PersistentDataHolder holder, String key) {
         return holder.getPersistentDataContainer().get(key(key), DataType.FLOAT);
     }
 
@@ -676,8 +665,7 @@ public class DataHandler {
      * @param key The key to the Float stored in the specified Block's PersistentDataContainer
      * @return The requested Float or null if not present
      */
-    @Nullable
-    public static float getDataFloat(Block b, String key) {
+    public static Float getDataFloat(Block b, String key) {
         return new CustomBlockData(b, instance).get(key(key), DataType.FLOAT);
     }
 
@@ -686,8 +674,7 @@ public class DataHandler {
      * @param key The key to the Long stored in the specified ItemStack's PersistentDataContainer
      * @return The requested Long or null if not present
      */
-    @Nullable
-    public static long getDataLong(ItemStack itemStack, String key) {
+    public static Long getDataLong(ItemStack itemStack, String key) {
         return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.LONG);
     }
 
@@ -696,8 +683,7 @@ public class DataHandler {
      * @param key The key to the Long stored in the specified Object's PersistentDataContainer
      * @return The requested Long or null if not present
      */
-    @Nullable
-    public static long getDataLong(PersistentDataHolder holder, String key) {
+    public static Long getDataLong(PersistentDataHolder holder, String key) {
         return holder.getPersistentDataContainer().get(key(key), DataType.LONG);
     }
 
@@ -706,8 +692,7 @@ public class DataHandler {
      * @param key The key to the Long stored in the specified Block's PersistentDataContainer
      * @return The requested Long or null if not present
      */
-    @Nullable
-    public static long getDataLong(Block b, String key) {
+    public static Long getDataLong(Block b, String key) {
         return new CustomBlockData(b, instance).get(key(key), DataType.LONG);
     }
 
@@ -716,8 +701,7 @@ public class DataHandler {
      * @param key The key to the Short stored in the specified ItemStack's PersistentDataContainer
      * @return The requested Short or null if not present
      */
-    @Nullable
-    public static short getDataShort(ItemStack itemStack, String key) {
+    public static Short getDataShort(ItemStack itemStack, String key) {
         return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.SHORT);
     }
 
@@ -726,8 +710,7 @@ public class DataHandler {
      * @param key The key to the Short stored in the specified Object's PersistentDataContainer
      * @return The requested Short or null if not present
      */
-    @Nullable
-    public static short getDataShort(PersistentDataHolder holder, String key) {
+    public static Short getDataShort(PersistentDataHolder holder, String key) {
         return holder.getPersistentDataContainer().get(key(key), DataType.SHORT);
     }
 
@@ -736,8 +719,7 @@ public class DataHandler {
      * @param key The key to the Short stored in the specified Block's PersistentDataContainer
      * @return The requested Short or null if not present
      */
-    @Nullable
-    public static short getDataShort(Block b, String key) {
+    public static Short getDataShort(Block b, String key) {
         return new CustomBlockData(b, instance).get(key(key), DataType.SHORT);
     }
 
@@ -746,8 +728,7 @@ public class DataHandler {
      * @param key The key to the Byte stored in the specified ItemStack's PersistentDataContainer
      * @return The requested Byte or null if not present
      */
-    @Nullable
-    public static byte getDataByte(ItemStack itemStack, String key) {
+    public static Byte getDataByte(ItemStack itemStack, String key) {
         return itemStack.getItemMeta().getPersistentDataContainer().get(key(key), DataType.BYTE);
     }
 
@@ -756,8 +737,7 @@ public class DataHandler {
      * @param key The key to the Byte stored in the specified Object's PersistentDataContainer
      * @return The requested Byte or null if not present
      */
-    @Nullable
-    public static byte getDataByte(PersistentDataHolder holder, String key) {
+    public static Byte getDataByte(PersistentDataHolder holder, String key) {
         return holder.getPersistentDataContainer().get(key(key), DataType.BYTE);
     }
 
@@ -766,8 +746,7 @@ public class DataHandler {
      * @param key The key to the Byte stored in the specified Block's PersistentDataContainer
      * @return The requested Byte or null if not present
      */
-    @Nullable
-    public static byte getDataByte(Block b, String key) {
+    public static Byte getDataByte(Block b, String key) {
         return new CustomBlockData(b, instance).get(key(key), DataType.BYTE);
     }
 
